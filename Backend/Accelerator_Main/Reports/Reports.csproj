@@ -14,4 +14,8 @@
     <DocumentationFile>.\bin\Reports.xml</DocumentationFile>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
 </Project>

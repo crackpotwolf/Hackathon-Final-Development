@@ -14,4 +14,9 @@
     <DocumentationFile>.\bin\Parse_Documents.xml</DocumentationFile>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+    <Folder Include="Models\" />
+  </ItemGroup>
+
 </Project>

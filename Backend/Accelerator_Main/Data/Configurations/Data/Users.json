@@ -1,0 +1,12 @@
+﻿[
+  {
+    "FirstName": "Главный",
+    "LastName": "Самый",
+    "MiddleName": "Администратор",
+    "Login": "admin",
+    "Email": "test@test.ru",
+    "Password": "672412Aa",
+    "Phone": "+77777777777",
+    "Roles": [ "Admin" ]
+  }
+]

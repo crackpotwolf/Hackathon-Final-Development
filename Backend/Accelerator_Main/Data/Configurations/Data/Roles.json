@@ -1,0 +1,10 @@
+﻿[
+  {
+    "Name": "Admin",
+    "Description": "Администратор"
+  },
+  {
+    "Name": "user",
+    "Description": "Временная роль"
+  }
+]

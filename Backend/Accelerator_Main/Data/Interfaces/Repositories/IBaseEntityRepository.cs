@@ -14,8 +14,6 @@ namespace Data.Interfaces.Repositories
     /// <typeparam name="T"></typeparam>
     public interface IBaseEntityRepository<T> where T : IBaseEntity
     {
-        T Get(Guid guid);
-        IEnumerable<T> GetByGuids(IEnumerable<Guid> guids);
         T Add(T model);
         IEnumerable<T> AddRange(IEnumerable<T> models);
         bool Update(T models);

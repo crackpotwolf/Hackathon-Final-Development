@@ -15,10 +15,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Configurations\Swagger\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="CompareNETObjects" Version="4.74.0" />
     <PackageReference Include="MailKit" Version="2.15.0" />

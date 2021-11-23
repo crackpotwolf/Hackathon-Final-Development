@@ -10,7 +10,7 @@ namespace Data.Models.DB.Account
     /// <summary>
     /// Связь пользователей и ролей
     /// </summary>
-    public class UserRoles : Entity
+    public class UserRoles : BaseEntity
     {
         /// <summary>
         /// Guid роли

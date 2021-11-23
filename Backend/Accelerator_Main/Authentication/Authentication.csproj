@@ -19,4 +19,8 @@
     <Folder Include="Models\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Data\Data.csproj" />
+  </ItemGroup>
+
 </Project>

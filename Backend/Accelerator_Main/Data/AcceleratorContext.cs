@@ -1,4 +1,5 @@
 ﻿using Data.Models.DB.Account;
+using Data.Models.DB.Project;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,29 @@ namespace Data
         public DbSet<UserRoles> UserRoles { get; set; }
         #endregion
 
+        #region Project
+
+        public DbSet<Applicant> Applicants { get; set; }
+
+        public DbSet<Company> Companies { get; set; }
+
+        public DbSet<Field> Fields { get; set; }
+
+        public DbSet<Subfield> Subfields { get; set; }
+
+        public DbSet<Technology> Technologies { get; set; }
+
+        public DbSet<Project> Projects { get; set; }
+
+        public DbSet<ProjectTechnologies> ProjectTechnologies { get; set; }
+
+        /// <summary>
+        /// Для теста
+        /// </summary>
+        public DbSet<FullProject> FullProjects { get; set; }
+
+        #endregion
+
         #endregion
 
         /// <summary>
@@ -59,6 +83,17 @@ namespace Data
                 .WithMany(p => p.UserRoles)
                 .HasForeignKey(p => p.UserGuid);
 
+            #endregion
+
+            #region Проекты
+
+            modelBuilder.Entity<ProjectTechnologies>()
+                .HasKey(p => new { p.ProjectId, p.TechnologyId});
+
+            modelBuilder.Entity<ProjectTechnologies>()
+                .HasOne(p => p.Project)
+                .WithMany(p => p.Technologies)
+                .HasForeignKey(p => p.ProjectId);
             #endregion
 
             #endregion

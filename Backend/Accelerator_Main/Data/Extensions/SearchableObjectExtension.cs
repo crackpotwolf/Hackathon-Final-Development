@@ -1,5 +1,7 @@
 ﻿using Data.Attributes;
 using Data.Interfaces;
+using Search_Data.Models;
+using Search_Data.Search;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +27,23 @@ namespace Data.Extensions
                 res.Add(property.GetValue(data).ToString());
             }
             return String.Join(", ", res);
+        }
+
+        /// <summary>
+        /// Индексирование объекта
+        /// </summary>
+        /// <param name="data">объект</param>
+        /// <param name="key">ключ объекта</param>
+        /// <param name="search">объект поиска</param>
+        public static void AddSearchableObjectToIndex(this ISearchable data, Guid key, WordSearch search)
+        {
+            TextDocument document = new TextDocument()
+            {
+                Guid = key,
+                Text = data.GetSearchablePropertiesStringifiedValue()
+            };
+
+            search.AddIndex(document);
         }
     }
 }

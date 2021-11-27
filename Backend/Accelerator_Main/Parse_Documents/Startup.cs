@@ -2,6 +2,7 @@
 using Data.Services.DB;
 using Data;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Search_Data.Models;
 
 namespace Parse_Documents
 {
@@ -20,7 +21,8 @@ namespace Parse_Documents
             #region Базовая инициализация DI
 
             services.AddBaseModuleDI(Configuration.GetConnectionString("DefaultConnection"));
-            
+            services.Configure<PathConfig>(Configuration.GetSection("PathConfig"));
+
             #endregion
         }
 

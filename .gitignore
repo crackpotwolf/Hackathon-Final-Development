@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /Backend/Accelerator_Main/.idea/.idea.Accelerator_Main/.idea
 /Backend/Accelerator_Main/global.json
+/Backend/Accelerator_Main/Parse_Documents/DocumentsIndexes

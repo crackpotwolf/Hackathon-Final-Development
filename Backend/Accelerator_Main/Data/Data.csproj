@@ -62,4 +62,8 @@
     <Folder Include="Models\ModelViews\Account\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Search_Data\Search_Data.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -7,9 +7,8 @@ namespace Data.Configurations.Swagger
     /// <summary>
     /// Swashbuckle Document Filter
     /// </summary>
-    public abstract class EnumTypesDocumentFilter : IDocumentFilter
+    public class EnumTypesDocumentFilter : IDocumentFilter
     {
-        /// <inheritdoc />
         public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {
             foreach (var path in swaggerDoc.Paths.Values)
@@ -27,14 +26,15 @@ namespace Data.Configurations.Swagger
 
                         parameter.Description += "<p>Варианты:</p>";
 
-                        var cutStart = schema.Description.IndexOf("<ul>", StringComparison.Ordinal);
-                        var cutEnd = schema.Description.IndexOf("</ul>", StringComparison.Ordinal) + 5;
+                        int cutStart = schema.Description.IndexOf("<ul>");
+                        int cutEnd = schema.Description.IndexOf("</ul>") + 5;
 
                         parameter.Description += schema.Description
                             .Substring(cutStart, cutEnd - cutStart);
                     }
                 }
             }
+
         }
     }
 }

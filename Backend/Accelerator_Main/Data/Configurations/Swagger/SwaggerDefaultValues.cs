@@ -11,7 +11,7 @@ namespace Data.Configurations.Swagger
     /// </summary>
     /// <remarks>Этот <see cref="IOperationFilter"/> ребуется только из-за ошибок в <see cref="SwaggerGenerator"/>.
     /// Как только они будут исправлены и опубликованы, этот класс можно будет удалить</remarks>
-    public abstract class SwaggerDefaultValues : IOperationFilter
+    public class SwaggerDefaultValues : IOperationFilter
     {
         /// <summary>
         /// Применяет фильтр к указанной операции с использованием заданного контекста.

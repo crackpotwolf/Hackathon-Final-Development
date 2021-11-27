@@ -1,28 +1,35 @@
-﻿using Data.Models.DB._BaseEntities;
+﻿using Data.Attributes;
+using Data.Extensions;
+using Data.Interfaces;
+using Data.Models.DB._BaseEntities;
 using Data.Models.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Data.Models.DB.Project
 {
-    public class FullProject : BaseEntity
+    public class FullProject : BaseEntity, ISearchable
     {
         /// <summary>
         /// Имя
         /// </summary>
+        [Searchable]
         public string ApplicantName { get; set; }
 
         /// <summary>
         /// Фамилия
         /// </summary>
+        [Searchable]
         public string ApplicantLastName { get; set; }
 
         /// <summary>
         /// Email
         /// </summary>
+        [Searchable]
         public string ApplicantEmail { get; set; }
 
         /// <summary>
@@ -152,5 +159,6 @@ namespace Data.Models.DB.Project
         /// Технологии
         /// </summary>
         public List<string> Technology { get; set; }
+
     }
 }

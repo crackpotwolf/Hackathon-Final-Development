@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -15,7 +15,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
+    <PackageReference Include="Lucene.Net" Version="4.8.0-beta00015" />
+    <PackageReference Include="Lucene.Net.QueryParser" Version="4.8.0-beta00015" />
   </ItemGroup>
 
 </Project>

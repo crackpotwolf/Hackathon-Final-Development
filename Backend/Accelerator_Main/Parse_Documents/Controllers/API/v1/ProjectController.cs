@@ -81,6 +81,10 @@ namespace Parse_Documents.Controllers.API.v1
             try
             {
                 var projects = _mapper.Map<List<FullProject>>(data);
+                foreach(var item in projects)
+                {
+                    var da = item.GetSearchableString();
+                }    
                 var res=_fullProjectRepository.AddRange(projects);
                 return Ok(res.Count(p=>p.Guid!=Guid.Empty));
             }

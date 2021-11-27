@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -115,7 +116,11 @@ namespace Data.Models.DB.Account
         /// <summary>
         /// Роли пользователя
         /// </summary>
+        [JsonIgnore]
         public virtual ICollection<UserRoles> UserRoles { get; set; }
+
+        [NotMapped]
+        public virtual IEnumerable<Role> Roles { get => UserRoles?.Select(p => p.Role); }
 
         #endregion
 

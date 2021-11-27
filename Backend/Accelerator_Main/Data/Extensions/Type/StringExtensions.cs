@@ -89,6 +89,6 @@ namespace Data.Extensions.Type
         /// <summary>
         /// Кроме цифр
         /// </summary>
-        public static Regex ExceptDigits = new("[^0-9]+");
+        private static Regex ExceptDigits = new("[^0-9]+");
     }
 }

@@ -65,11 +65,6 @@ namespace Data.Models.DB.Account
         public virtual string PasswordHash { get; set; }
 
         /// <summary>
-        /// Логин
-        /// </summary>
-        public string Login { get; set; }
-
-        /// <summary>
         /// Секретный отпечаток
         /// Значение необходимое для смены пароля
         /// </summary>
@@ -88,7 +83,7 @@ namespace Data.Models.DB.Account
         /// <summary>
         /// Обновление секретного отпечатка (пароля)
         /// </summary>
-        public void UpdateSecurityStamp()
+        private void UpdateSecurityStamp()
         {
             SecurityStamp = Guid.NewGuid().ToString().Hash();
         }
@@ -128,7 +123,7 @@ namespace Data.Models.DB.Account
         /// Валидация данных
         /// </summary>
         /// <returns></returns>
-        public List<AuthStatus> Validate()
+        public IEnumerable<AuthStatus> Validate()
         {
             var errors = new List<AuthStatus>();
 

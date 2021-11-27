@@ -16,11 +16,12 @@ namespace Data.Services.Account
     /// </summary>
     public class EmailService
     {
-        private static Dictionary<ServiceMail, EmailAuth> emailBoxes = new Dictionary<ServiceMail, EmailAuth>()
+        private static readonly Dictionary<ServiceMail, EmailAuth> EmailBoxes = new Dictionary<ServiceMail, EmailAuth>()
         {
             {
                 ServiceMail.Yandex,
-                new EmailAuth(){  Name= "ВНИКТИ",  Email = "helpdesk@bilaboratory.com", Host = "smtp.yandex.ru" , Password = "672412Aa" , Port= 465 }
+                new EmailAuth(){  Name= "ВНИКТИ",  Email = "helpdesk@bilaboratory.com", Host = "smtp.yandex.ru" , 
+                    Password = "672412Aa" , Port= 465 }
             },
         };
 
@@ -32,11 +33,12 @@ namespace Data.Services.Account
         /// <param name="message">Текст сообщения</param>
         /// <param name="box">Тип почтового ящика, который необходимо использовать для отправки Email</param>
         /// <returns></returns>
-        public async Task<ResultEmailService> SendEmailAsync(string email, string subject, string message, ServiceMail box = ServiceMail.Yandex)
+        public static async Task<ResultEmailService> SendEmailAsync(string email, string subject, string message, 
+            ServiceMail box = ServiceMail.Yandex)
         {
             try
             {
-                EmailAuth mail = emailBoxes[box];
+                EmailAuth mail = EmailBoxes[box];
 
                 // Создаем объект сообщения
                 var emailMessage = new MimeMessage();

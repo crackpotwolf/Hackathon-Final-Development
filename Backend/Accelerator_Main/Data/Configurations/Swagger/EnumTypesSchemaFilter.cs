@@ -11,11 +11,11 @@ namespace Data.Configurations.Swagger
     /// <summary>
     /// Swashbuckle Schema Filter
     /// </summary>
-    public class EnumTypesSchemaFilter : ISchemaFilter
+    public abstract class EnumTypesSchemaFilter : ISchemaFilter
     {
         private readonly XDocument _xmlComments;
 
-        public EnumTypesSchemaFilter(string xmlPath)
+        protected EnumTypesSchemaFilter(string xmlPath)
         {
             if (File.Exists(xmlPath))
             {
@@ -23,6 +23,7 @@ namespace Data.Configurations.Swagger
             }
         }
 
+        /// <inheritdoc />
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
             if (_xmlComments == null) return;
@@ -41,10 +42,13 @@ namespace Data.Configurations.Swagger
                     var enumMemberComments = _xmlComments.Descendants("member")
                         .FirstOrDefault(m => m.Attribute("name").Value.Equals(fullEnumMemberName, StringComparison.OrdinalIgnoreCase));
 
-                    if (enumMemberComments == null) continue;
+                    if (enumMemberComments == null) 
+                        continue;
 
                     var summary = enumMemberComments.Descendants("summary").FirstOrDefault();
-                    if (summary == null) continue;
+                    
+                    if (summary == null) 
+                        continue;
 
                     schema.Description += $"<li><i>{enumMemberName}</i> - {summary.Value.Trim()}</li>";
                 }

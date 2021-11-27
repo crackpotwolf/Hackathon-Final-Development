@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using System;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Data.Configurations.Swagger
@@ -6,8 +7,9 @@ namespace Data.Configurations.Swagger
     /// <summary>
     /// Swashbuckle Document Filter
     /// </summary>
-    public class EnumTypesDocumentFilter : IDocumentFilter
+    public abstract class EnumTypesDocumentFilter : IDocumentFilter
     {
+        /// <inheritdoc />
         public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {
             foreach (var path in swaggerDoc.Paths.Values)
@@ -25,8 +27,8 @@ namespace Data.Configurations.Swagger
 
                         parameter.Description += "<p>Варианты:</p>";
 
-                        int cutStart = schema.Description.IndexOf("<ul>");
-                        int cutEnd = schema.Description.IndexOf("</ul>") + 5;
+                        var cutStart = schema.Description.IndexOf("<ul>", StringComparison.Ordinal);
+                        var cutEnd = schema.Description.IndexOf("</ul>", StringComparison.Ordinal) + 5;
 
                         parameter.Description += schema.Description
                             .Substring(cutStart, cutEnd - cutStart);

@@ -24,10 +24,10 @@ namespace Data.Services.Account
     /// </summary>
     public class UserManager
     {
-        protected readonly AcceleratorContext db;
+        private readonly AcceleratorContext db;
         private readonly ILogger<UserManager> _logger;
-        protected readonly EmailService _emailService;
-        protected readonly IConfiguration _configuration;
+        private readonly EmailService _emailService;
+        private readonly IConfiguration _configuration;
 
         private IQueryable<User> _users => db.Users.Where(p => !p.IsDelete);
 
@@ -177,12 +177,12 @@ namespace Data.Services.Account
         /// <param name="email">Email</param>
         /// <param name="password">Пароль</param>
         /// <returns></returns>
-        public ClaimsIdentity GetIdentity(string email, string password)
+        private ClaimsIdentity GetIdentity(string email, string password)
         {
             var passwordHash = GetPasswordHash(password);
 
             // Информация о пользователе
-            User user = _users
+            var user = _users
                 .Include(p => p.UserRoles)
                 .ThenInclude(p => p.Role)
                 .FirstOrDefault(x => x.Email == email && x.PasswordHash == passwordHash);
@@ -198,7 +198,7 @@ namespace Data.Services.Account
             };
 
             // Добавить роли в токен
-            var typeRole = "Role";
+            const string? typeRole = "Role";
 
             user.UserRoles.Select(p => p.Role.Name)
                 .ToList()
@@ -274,8 +274,10 @@ namespace Data.Services.Account
 
                 #region Присваивание базовой роли
 
-                if (roles == null) roles = new List<Role>();
-                    roles.Add(db.Roles.FirstOrDefault(p => p.Name == AuthOptions.BaseRole));
+                if (roles == null) 
+                    roles = new List<Role>();
+                    
+                roles.Add(db.Roles.FirstOrDefault(p => p.Name == AuthOptions.BaseRole));
                     
                 var userRoles = roles.DistinctBy(p => p.Name)
                     .Select(p => new UserRoles()
@@ -299,7 +301,7 @@ namespace Data.Services.Account
                 });
 
                 // TODO: Исправление сообщений, в виде: "Вас зарегистрировали в системе..."
-                var resultEmailSend = await _emailService.SendEmailAsync(user.Email,
+                var resultEmailSend = await EmailService.SendEmailAsync(user.Email,
                     "Создание учетной записи",
                     $"Вы создали учетную запись. Для установки пароля перейдите по ссылке: <a href=\"{uri}\">Установка пароля</a>");
 
@@ -333,6 +335,7 @@ namespace Data.Services.Account
         public async Task<ResultRegistration> RegisterUserAsync(User user, string password, List<Role> roles = null)
         {
             using (var transaction = db.Database.BeginTransaction())
+                
             {
                 try
                 {
@@ -380,7 +383,7 @@ namespace Data.Services.Account
                         {nameof(Models.Services.ConfirmEmail.UserGuid).FirstLower(), user.Guid.ToString() },
                     });
 
-                    var resultEmailSend = await _emailService.SendEmailAsync(user.Email,
+                    var resultEmailSend = await EmailService.SendEmailAsync(user.Email,
                         "Подтверждение почты",
                         $"Для смены пароля перейдите по ссылке: <a href=\"{uri}\">Сброс пароля</a>");
 
@@ -437,7 +440,7 @@ namespace Data.Services.Account
                     {nameof(ForgotPassword.UserGuid).FirstLower(), user.Guid.ToString() },
                 });
 
-                await _emailService.SendEmailAsync(user.Email,
+                await EmailService.SendEmailAsync(user.Email,
                     "Сброс пароля",
                     $"Для смены пароля перейдите по ссылке: <a href=\"{uri}\">Сброс пароля</a>");
 

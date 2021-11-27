@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Data.Models.DB.Account;
+using Data.Models.ModelViews.Account;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +19,11 @@ namespace Data.Services.DB
         /// </summary>
         public MappingProfile()
         {
+            CreateMap<UserRegister, User>();
+            CreateMap<User, UserRegister>();
 
+            CreateMap<UserCreation, User>();
+            CreateMap<UserUpdateInfo, User>();
         }
     }
 }

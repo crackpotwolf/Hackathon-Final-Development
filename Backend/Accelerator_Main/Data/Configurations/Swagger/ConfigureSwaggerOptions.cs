@@ -13,26 +13,26 @@ namespace Data.Configurations.Swagger
     /// <see cref="IApiVersionDescriptionProvider"/> служба была разрешена из контейнера службы.</remarks>
     public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
     {
-        readonly IApiVersionDescriptionProvider provider;
+        readonly IApiVersionDescriptionProvider _provider;
 
         /// <summary>
         /// Инициализирует новый экземпляр класса <see cref="ConfigureSwaggerOptions"/> class.
         /// </summary>
         /// <param name="provider">The <see cref="IApiVersionDescriptionProvider">provider</see> используемый для создания документов Swagger.</param>
-        public ConfigureSwaggerOptions(IApiVersionDescriptionProvider provider) => this.provider = provider;
+        public ConfigureSwaggerOptions(IApiVersionDescriptionProvider provider) => this._provider = provider;
 
         /// <inheritdoc />
         public void Configure(SwaggerGenOptions options)
         {
             // добавляем документ swagger для каждой обнаруженной версии API
             // примечание: вы можете пропустить или задокументировать устаревшие версии API по-другому
-            foreach (var description in provider.ApiVersionDescriptions)
+            foreach (var description in _provider.ApiVersionDescriptions)
             {
                 options.SwaggerDoc(description.GroupName, CreateInfoForApiVersion(description));
             }
         }
 
-        static OpenApiInfo CreateInfoForApiVersion(ApiVersionDescription description)
+        private static OpenApiInfo CreateInfoForApiVersion(ApiVersionDescription description)
         {
             var info = new OpenApiInfo()
             {

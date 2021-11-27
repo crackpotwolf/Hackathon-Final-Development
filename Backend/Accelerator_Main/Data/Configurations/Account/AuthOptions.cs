@@ -10,12 +10,12 @@ namespace Data.Configurations.Account
     /// <summary>
     /// Параметры токена
     /// </summary>
-    public class AuthOptions
+    public static class AuthOptions
     {
         /// <summary>
         /// Роль
         /// </summary>
-        public static string BaseRole = "user";
+        public const string BaseRole = "user";
 
         /// <summary>
         /// Издатель токена

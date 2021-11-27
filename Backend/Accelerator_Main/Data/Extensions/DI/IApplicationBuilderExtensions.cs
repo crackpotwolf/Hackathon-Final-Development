@@ -30,17 +30,6 @@ namespace Data.Extensions.DI
     public static class IApplicationBuilderExtensions
     {
         /// <summary>
-        /// Применение миграций БД
-        /// </summary>
-        /// <param name="app"></param>
-        public static void MigrateDatabase(this IApplicationBuilder app)
-        {
-            using var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope();
-            
-            serviceScope.ServiceProvider.GetRequiredService<AcceleratorContext>().Database.Migrate();
-        }
-
-        /// <summary>
         /// Использование базовых сервисов 
         /// </summary>
         /// <param name="app"></param>
@@ -93,11 +82,22 @@ namespace Data.Extensions.DI
         }
 
         /// <summary>
+        /// Применение миграций БД
+        /// </summary>
+        /// <param name="app"></param>
+        private static void MigrateDatabase(this IApplicationBuilder app)
+        {
+            using var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope();
+
+            serviceScope.ServiceProvider.GetRequiredService<AcceleratorContext>().Database.Migrate();
+        }
+
+        /// <summary>
         /// Внедрнение автогенерируемой документации API - Swagger
         /// </summary>
         /// <param name="app"></param>
         /// <param name="provider"></param>
-        public static void UseSwaggerService(this IApplicationBuilder app, IApiVersionDescriptionProvider provider)
+        private static void UseSwaggerService(this IApplicationBuilder app, IApiVersionDescriptionProvider provider)
         {
             var isDevelopment = app.ApplicationServices.GetService<IWebHostEnvironment>().IsDevelopment();
             string prefixApi = isDevelopment ? "" : $"/api/{Assembly.GetEntryAssembly().GetName().Name.ToLower()}";
@@ -121,7 +121,7 @@ namespace Data.Extensions.DI
         /// Использование JWT токенов
         /// </summary>
         /// <param name="app"></param>
-        public static void UseJWTAuthentication(this IApplicationBuilder app)
+        private static void UseJWTAuthentication(this IApplicationBuilder app)
         {
             app.UseAuthentication();
             app.UseAuthorization();

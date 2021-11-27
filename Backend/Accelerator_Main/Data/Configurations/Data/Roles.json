@@ -1,7 +1,11 @@
-﻿[
+[
   {
     "Name": "Admin",
     "Description": "Администратор"
+  },
+  {
+    "Name": "External",
+    "Description": "Внешний пользователь"
   },
   {
     "Name": "user",

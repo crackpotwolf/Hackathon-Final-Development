@@ -11,7 +11,10 @@ namespace Data.Extensions.Type
     /// </summary>
     public static class ListExtensions
     {
-        public static Dictionary<string, string> ServicSymbols = new Dictionary<string, string>()
+        /// <summary>
+        /// Словарь символов
+        /// </summary>
+        private static Dictionary<string, string> ServicSymbols = new Dictionary<string, string>()
         {
             { @"\", @"\\" },
             { "\0", @"\\0" },
@@ -65,7 +68,6 @@ namespace Data.Extensions.Type
             string startChar = "",
             string endChar = "")
         {
-
             // Замена спец-символов
             var newList = list.Escaping();
 
@@ -78,7 +80,7 @@ namespace Data.Extensions.Type
         /// <typeparam name="T"></typeparam>
         /// <param name="list">Список объектов</param>
         /// <returns></returns>
-        public static List<string> Escaping<T>(this IEnumerable<T> list)
+        private static List<string?> Escaping<T>(this IEnumerable<T> list)
         {
             return list.Select(p =>
             {

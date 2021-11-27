@@ -1,5 +1,6 @@
 ﻿using Data.Extensions.DI;
 using Data.Services.DB;
+using Data;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace Authentication
@@ -25,15 +26,15 @@ namespace Authentication
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app,
-            IWebHostEnvironment env,
             IApiVersionDescriptionProvider provider,
-            InitDB initService)
+            IWebHostEnvironment env,
+            InitDB InitDB)
         {
             app.UseBaseServices(env, provider);
 
             #region Init
 
-            initService.InitAuth();
+            InitDB.InitAuth();
 
             #endregion
         }

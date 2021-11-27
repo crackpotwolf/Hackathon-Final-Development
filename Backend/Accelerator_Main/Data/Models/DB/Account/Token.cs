@@ -44,6 +44,6 @@ namespace Data.Models.DB.Account
         /// </summary>
         [JsonIgnore]
         [XmlIgnore]
-        public AuthStatus Status { get; set; }
+        private AuthStatus Status { get; set; }
     }
 }

@@ -83,7 +83,7 @@ namespace Data.Extensions.DI
         /// </summary>
         /// <param name="services"></param>
         /// <param name="connectionString">Строка подключения к БД</param>
-        public static void AddContext(this IServiceCollection services, string connectionString)
+        private static void AddContext(this IServiceCollection services, string connectionString)
         {
             services.AddDbContext<AcceleratorContext>(options =>
             {
@@ -99,7 +99,7 @@ namespace Data.Extensions.DI
         /// Внедрение контроллеров и сериализацию Newtonsoft
         /// </summary>
         /// <param name="services"></param>
-        public static void AddControllersWithNewtonsoft(this IServiceCollection services)
+        private static void AddControllersWithNewtonsoft(this IServiceCollection services)
         {
             services.AddControllers(o =>
             {
@@ -155,7 +155,7 @@ namespace Data.Extensions.DI
         /// Внедрение авторизации по JWT токенам
         /// </summary>
         /// <param name="services"></param>
-        public static void AddJWTAuthentication(this IServiceCollection services)
+        private static void AddJWTAuthentication(this IServiceCollection services)
         {
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -181,7 +181,7 @@ namespace Data.Extensions.DI
         /// Внедрение автогенерируемой документации Swagger
         /// </summary>
         /// <param name="services"></param>
-        public static void AddSwagger(this IServiceCollection services)
+        private static void AddSwagger(this IServiceCollection services)
         {
             #region Swagger
 
@@ -246,7 +246,7 @@ namespace Data.Extensions.DI
         /// Внедрение сервисов
         /// </summary>
         /// <param name="services"></param>
-        public static void AddServices(this IServiceCollection services)
+        private static void AddServices(this IServiceCollection services)
         {
             // Repositories
             services.AddTransient(typeof(IBaseEntityRepository<>), typeof(BaseEntityRepository<>));

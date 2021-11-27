@@ -63,7 +63,7 @@ namespace Data.Services.DB
         /// <returns></returns>
         private List<ServiceUser> GetBaseUsers()
         {
-            var json = new FileInfo("Configurations/Data/Users.json").ReadFile();
+            var json = new FileInfo("../Data/Configurations/Data/Users.json").ReadFile();
 
             var allRoles = _rolesRepository.GetList();
 
@@ -71,15 +71,15 @@ namespace Data.Services.DB
             {
                 new
                 {
-                    FirstName= "",
-                    LastName= "",
-                    MiddleName= "",
-                    Email= "",
-                    Password= "",
-                    Phone=  "",
+                    FirstName = "",
+                    LastName = "",
+                    MiddleName = "",
+                    Email = "",
+                    Password = "",
+                    Phone =  "",
                     Roles = Array.Empty<string>()
                 }
-            }).Select(p =>
+            })!.Select(p =>
             {
                 var roles = allRoles.Where(r => p.Roles.Contains(r.Name)).ToList();
 
@@ -111,7 +111,7 @@ namespace Data.Services.DB
         /// <returns>Роли</returns>
         private void InitRoles()
         {
-            var json = new FileInfo("Configurations/Data/Roles.json").ReadFile();
+            var json = new FileInfo("../Data/Configurations/Data/Roles.json").ReadFile();
 
             var roles = JsonConvert.DeserializeObject<List<Role>>(json);
 

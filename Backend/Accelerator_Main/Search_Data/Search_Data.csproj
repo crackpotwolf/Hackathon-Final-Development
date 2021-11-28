@@ -17,6 +17,12 @@
   <ItemGroup>
     <PackageReference Include="Lucene.Net" Version="4.8.0-beta00015" />
     <PackageReference Include="Lucene.Net.QueryParser" Version="4.8.0-beta00015" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational.Design" Version="1.1.6" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Data_Path\Data_Path.csproj" />
   </ItemGroup>
 
 </Project>

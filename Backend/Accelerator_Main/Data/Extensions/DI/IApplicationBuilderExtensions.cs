@@ -37,8 +37,6 @@ namespace Data.Extensions.DI
         /// <param name="env"></param>
         public static void UseBaseServices(this IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
         {
-            app.MigrateDatabase();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -85,7 +83,7 @@ namespace Data.Extensions.DI
         /// Применение миграций БД
         /// </summary>
         /// <param name="app"></param>
-        private static void MigrateDatabase(this IApplicationBuilder app)
+        public static void MigrateDatabase(this IApplicationBuilder app)
         {
             using var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope();
 

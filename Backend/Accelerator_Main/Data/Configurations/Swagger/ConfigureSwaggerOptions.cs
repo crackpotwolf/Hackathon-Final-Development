@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Reflection;
 
 namespace Data.Configurations.Swagger
 {
@@ -34,10 +37,16 @@ namespace Data.Configurations.Swagger
 
         private static OpenApiInfo CreateInfoForApiVersion(ApiVersionDescription description)
         {
+            var configuration = new ConfigurationBuilder()
+               .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+               .Build();
+
             var info = new OpenApiInfo()
             {
-                Title = $"Accelerator API {description.ApiVersion}",
+                Title = $"{configuration["Swagger:Title"]} API {description.ApiVersion}",
                 Version = description.ApiVersion.ToString(),
+                Description = $"{configuration["Swagger:Description"]}",
+                License = new OpenApiLicense() { Name = "MIT", Url = new Uri("https://opensource.org/licenses/MIT") }
             };
 
             if (description.IsDeprecated)

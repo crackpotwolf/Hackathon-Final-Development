@@ -20,46 +20,31 @@ namespace Authentication
     /// </summary>
     public class Program
     {
+        /// <summary>
+        /// Точка входа
+        /// </summary>
+        /// <param name="args"></param>
         public static void Main(string[] args)
         {
-            //configure logging first
-            ConfigureLogging();
+            // Имя проекта
+            var projectName = Assembly.GetExecutingAssembly().GetName().Name;
 
-            //then create the host, so that if the host fails we can log errors
+            // Имя окружения
+            var envName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+            // Имя для индексирования
+            var indexName = $"{projectName?.ToLower().Replace(".", "_")}_{envName?.ToLower().Replace(".", "_")}";
+
+            InitLogging.ConfigureLogging(indexName);
+
+            // Создание хоста
             CreateHost(args);
         }
 
-        private static void ConfigureLogging()
-        {
-            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            var configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile(
-                    $"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json",
-                    optional: true)
-                .Build();
-
-            Log.Logger = new LoggerConfiguration()
-                .Enrich.WithExceptionDetails()
-                .Enrich.FromLogContext()
-                .Enrich.WithMachineName()
-                .WriteTo.Debug()
-                .WriteTo.Console()
-                .WriteTo.Elasticsearch(ConfigureElasticSink(configuration, environment))
-                .Enrich.WithProperty("Environment", environment)
-                .ReadFrom.Configuration(configuration)
-                .CreateLogger();
-        }
-
-        private static ElasticsearchSinkOptions ConfigureElasticSink(IConfigurationRoot configuration, string environment)
-        {
-            return new ElasticsearchSinkOptions(new Uri(configuration["ElasticConfiguration:Uri"]))
-            {
-                AutoRegisterTemplate = true,
-                IndexFormat = $"{Assembly.GetExecutingAssembly().GetName().Name.ToLower().Replace(".", "-")}-{environment?.ToLower().Replace(".", "-")}"
-            };
-        }
-
+        /// <summary>
+        /// Создание хоста
+        /// </summary>
+        /// <param name="args"></param>
         private static void CreateHost(string[] args)
         {
             try
@@ -73,8 +58,14 @@ namespace Authentication
             }
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
+        /// <summary>
+        /// Конфиг хоста
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            return Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
@@ -87,5 +78,6 @@ namespace Authentication
                         optional: true);
                 })
                 .UseSerilog();
+        }
     }
 }

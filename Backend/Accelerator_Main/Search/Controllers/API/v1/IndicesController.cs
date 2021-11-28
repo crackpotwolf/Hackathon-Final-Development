@@ -1,11 +1,14 @@
-﻿using Data.Interfaces.Repositories;
-using Data.Models.Configurations;
+﻿using Data.Attributes;
+using Data.Extensions;
+using Data.Interfaces.Repositories;
 using Data.Models.DB.Project;
+using Data_Path.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 using Microsoft.Extensions.Options;
 using Search_Data.Models;
 using Search_Data.Search;
+using Search_Data.Services;
 using System.ComponentModel;
 
 namespace Search.Controllers.API.v1
@@ -14,21 +17,28 @@ namespace Search.Controllers.API.v1
     /// Индексирование
     /// </summary>
     [ApiController]
+    [ApiVersion("1.0")]
     [DisplayName("indices")]
-    [Route("api/indices/")]
+    [SetRoute]
+#if RELEASE
+    [Authorize]
+#endif
     public class IndicesController : ControllerBase
     {
         protected IBaseEntityRepository<FullProject> _fullProjectRepository;
 
+        protected readonly IndicesManager _indicesManager;
         private readonly ILogger<IndexModel> _logger;
         private readonly PathConfig _pathConfig;
 
         /// <inheritdoc />
         public IndicesController(ILogger<IndexModel> logger,
             IBaseEntityRepository<FullProject> fullProjectRepository,
+            IndicesManager indicesManager,
             IOptions<PathConfig> pathConfig)
         {
             _fullProjectRepository = fullProjectRepository;
+            _indicesManager = indicesManager;
             _pathConfig = pathConfig.Value;
             _logger = logger;
         }
@@ -48,33 +58,7 @@ namespace Search.Controllers.API.v1
         {
             try
             {
-                _logger.LogInformation($"Начало индексирования документа.");
-
-                // Для замера времени
-                var timeStart = DateTime.UtcNow;
-
-                var document = new TextDocument()
-                {
-                    Guid = guidFile,
-                    Text = System.IO.File.ReadAllText(filePath)
-                };
-
-                _logger.LogInformation($"Документ считан.");
-
-                // Инициализация
-                _logger.LogInformation($"Инициализация документа.");
-
-                var search = new WordSearch(_pathConfig.DocumentsIndexes);
-
-                // Индексирование
-                _logger.LogInformation($"Индексирование документа.");
-
-                search.AddIndex(document);
-
-                // Применить изменения
-                search.CommitChanges();
-
-                _logger.LogInformation($"Индексирование завершено за: {(DateTime.UtcNow - timeStart).TotalSeconds} секунд.");
+                _indicesManager.AddDocumentForIndex(filePath, guidFile);
 
                 return Ok();
             }
@@ -101,25 +85,7 @@ namespace Search.Controllers.API.v1
         {
             try
             {
-                _logger.LogInformation($"Начало удаления документа.");
-
-                // Для замера времени
-                var timeStart = DateTime.UtcNow;
-
-                // Инициализация
-                _logger.LogInformation($"Инициализация для документа.");
-
-                var search = new WordSearch(_pathConfig.DocumentsIndexes);
-
-                // Удаление
-                _logger.LogInformation($"Удаление документа.");
-
-                search.DeleteIndex(guidFile);
-
-                // Применить изменения
-                search.CommitChanges();
-
-                _logger.LogInformation($"Удаление завершено за: {(DateTime.UtcNow - timeStart).TotalSeconds} секунд.");
+                _indicesManager.DeleteDocumentForIndex(guidFile);
 
                 return Ok();
             }
@@ -145,25 +111,7 @@ namespace Search.Controllers.API.v1
         {
             try
             {
-                _logger.LogInformation($"Начало удаления всех документов");
-
-                // Для замера времени
-                var timeStart = DateTime.UtcNow;
-
-                // Инициализация
-                _logger.LogInformation($"Инициализация");
-
-                var search = new WordSearch(_pathConfig.DocumentsIndexes);
-
-                // Удаление
-                _logger.LogInformation($"Удаление всех документов");
-
-                search.DeleteAllIndexes();
-
-                // Применить изменения
-                search.CommitChanges();
-
-                _logger.LogInformation($"Удаление завершено за: {(DateTime.UtcNow - timeStart).TotalSeconds} секунд");
+                _indicesManager.DeleteAllDocuments();
 
                 return Ok();
             }
@@ -232,33 +180,7 @@ namespace Search.Controllers.API.v1
         {
             try
             {
-                _logger.LogInformation($"Начало индексирования документа.");
-
-                // Для замера времени
-                var timeStart = DateTime.UtcNow;
-
-                var document = new TextDocument()
-                {
-                    Guid = guidFile,
-                    Text = System.IO.File.ReadAllText(filePath)
-                };
-
-                _logger.LogInformation($"Документ считан.");
-
-                // Инициализация
-                _logger.LogInformation($"Инициализация документа.");
-
-                var search = new WordSearch(_pathConfig.DocumentsIndexes);
-
-                // Индексирование
-                _logger.LogInformation($"Индексирование документа.");
-
-                search.UpdateIndex(document);
-
-                // Применить изменения
-                search.CommitChanges();
-
-                _logger.LogInformation($"Индексирование завершено за: {(DateTime.UtcNow - timeStart).TotalSeconds} секунд.");
+                _indicesManager.UpdateDocumentForIndex(filePath, guidFile);
 
                 return Ok();
             }

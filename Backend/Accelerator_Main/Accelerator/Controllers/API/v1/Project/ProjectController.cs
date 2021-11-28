@@ -2,16 +2,17 @@
 using Data.Attributes;
 using Data.Extensions;
 using Data.Interfaces.Repositories;
-using Data.Models.Configurations;
 using Data.Models.DB.Project;
 using Data.Models.Services;
 using Data.Services.Account;
+using Data_Path.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 using Microsoft.Extensions.Options;
 using Search_Data.Search;
 using Swashbuckle.AspNetCore.Annotations;
+using System.ComponentModel;
 
 namespace Accelerator.Controllers.API.v1.Projects
 {
@@ -20,7 +21,11 @@ namespace Accelerator.Controllers.API.v1.Projects
     /// </summary>
     [ApiController]
     [ApiVersion("1.0")]
+    [DisplayName("project")]
     [SetRoute]
+#if RELEASE
+    [Authorize]
+#endif
     public class ProjectController : ControllerBase
     {
         protected IBaseEntityRepository<FullProject> _fullProjectRepository;

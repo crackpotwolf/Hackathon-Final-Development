@@ -2,6 +2,7 @@
 using Data.Services.DB;
 using Data;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using System.Reflection;
 
 namespace Authentication
 {
@@ -20,7 +21,17 @@ namespace Authentication
             #region Базовая инициализация DI
 
             services.AddBaseModuleDI(Configuration.GetConnectionString("DefaultConnection"));
-            
+
+            #endregion
+
+            #region Swagger
+
+            // Текущее имя проекта
+            var curProjectName = $"{Assembly.GetExecutingAssembly().GetName().Name}";
+
+            // Swagger docs
+            services.AddSwagger(curProjectName);
+
             #endregion
         }
 
@@ -30,6 +41,8 @@ namespace Authentication
             IWebHostEnvironment env,
             InitDB InitDB)
         {
+            app.MigrateDatabase();
+
             app.UseBaseServices(env, provider);
 
             #region Init

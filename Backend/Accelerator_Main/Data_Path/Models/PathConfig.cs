@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Data.Models.Configurations
+namespace Data_Path.Models
 {
     /// <summary>
     /// Пути

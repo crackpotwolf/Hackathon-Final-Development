@@ -52,9 +52,6 @@ namespace Data.Extensions.DI
             // Routes
             services.AddControllersWithNewtonsoft();
 
-            // Swagger docs
-            services.AddSwagger();
-
             // Auth services
             services.AddJWTAuthentication();
 
@@ -181,7 +178,8 @@ namespace Data.Extensions.DI
         /// Внедрение автогенерируемой документации Swagger
         /// </summary>
         /// <param name="services"></param>
-        private static void AddSwagger(this IServiceCollection services)
+        /// <param name="curProjectName"></param>
+        public static void AddSwagger(this IServiceCollection services, string curProjectName)
         {
             #region Swagger
 
@@ -203,14 +201,17 @@ namespace Data.Extensions.DI
 
             services.AddSwaggerGen(c =>
             {
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                c.IncludeXmlComments(xmlPath, true);
+                c.DocumentFilter<EnumTypesDocumentFilter>();
+
+                c.AddXmlComments("Accelerator", curProjectName);
+                c.AddXmlComments("Authentication", curProjectName);
+                c.AddXmlComments("Data", curProjectName);
+                c.AddXmlComments("Data_Path", curProjectName);
+                c.AddXmlComments("Parse_Documents", curProjectName);
+                c.AddXmlComments("Search", curProjectName);
+                c.AddXmlComments("Search_Data", curProjectName);
 
                 c.EnableAnnotations();
-
-                c.DocumentFilter<EnumTypesDocumentFilter>();
-                c.SchemaFilter<EnumTypesSchemaFilter>(xmlPath);
 
                 c.OperationFilter<SwaggerDefaultValues>();
 
@@ -240,6 +241,29 @@ namespace Data.Extensions.DI
             });
 
             #endregion
+        }
+
+        /// <summary>
+        /// Добавить коментарии
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="externalProjectName"></param>
+        public static void AddXmlComments(this SwaggerGenOptions options, string externalProjectName, string curProjectName)
+        {
+            // Имя файла с коментами для стороннего проекта
+            var externalProjectXmlFile = $"{externalProjectName}.xml";
+
+            // Путь для стороннего проекта
+            var externalProjectPath = AppContext.BaseDirectory.Replace($"\\{curProjectName}\\", $"\\{externalProjectName}\\");
+
+            // Путь к файлу стороннего проекта
+            var externalProjectXmlFilePath = Path.Combine(externalProjectPath, externalProjectXmlFile);
+
+            // Включить коментарии
+            options.IncludeXmlComments(externalProjectXmlFilePath, true);
+
+            // Добавить фильтр
+            options.SchemaFilter<EnumTypesSchemaFilter>(externalProjectXmlFilePath);
         }
 
         /// <summary>

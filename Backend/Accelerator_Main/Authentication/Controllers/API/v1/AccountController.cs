@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 using Swashbuckle.AspNetCore.Annotations;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Authentication.Controllers.API.v1
@@ -21,8 +22,11 @@ namespace Authentication.Controllers.API.v1
     /// </summary>
     [ApiController]
     [ApiVersion("1.0")]
+    [DisplayName("account")]
     [SetRoute]
+#if RELEASE
     [Authorize(Roles = "Admin")]
+#endif
     public class AccountController : Controller
     {
         protected IBaseEntityRepository<User> _usersRepository;
@@ -144,7 +148,7 @@ namespace Authentication.Controllers.API.v1
         /// <param name="model">Информация о пользователе</param>
         /// <returns></returns>
         [HttpPost("creation")]
-        [Authorize(Roles = "R5, Admin")]
+        [Authorize(Roles = "Admin")]
         [SwaggerResponse(200, "Guid нового пользователя, на его email отправлена ссылка для установки пароля", typeof(Guid))]
         [SwaggerResponse(400, "Неверные данные или пользователь уже существует. Содержит информацию об ошибках", typeof(List<AuthStatus>))]
         [SwaggerResponse(500, "Неизвестная ошибка")]
@@ -335,7 +339,7 @@ namespace Authentication.Controllers.API.v1
         [HttpPut("update-user-info")]
         [SwaggerResponse(200, "Обновленная информация о пользователе", typeof(User))]
         [SwaggerResponse(500, "Произошла ошибка")]
-        [Authorize(Roles = "R1, R2, R3, R4, R5, Admin")]
+        [Authorize(Roles = "Admin")]
         public IActionResult UpdateUserInfo(UserUpdateInfo model)
         {
             var user = _mapper.Map(model, GetUser());
@@ -352,7 +356,7 @@ namespace Authentication.Controllers.API.v1
         /// <param name="guid">Идентификатор пользователя</param>
         /// <param name="roles">Список ролей пользователя</param>
         /// <returns></returns>
-        [Authorize(Roles = "R5, Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost("set-roles/{guid}")]
         [SwaggerResponse(200, "Роли успешно обновлены")]
         [SwaggerResponse(400, "Пользователь не найден")]

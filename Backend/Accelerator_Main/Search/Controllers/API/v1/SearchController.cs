@@ -2,10 +2,10 @@
 using Data.Attributes;
 using Data.Extensions;
 using Data.Interfaces.Repositories;
-using Data.Models.Configurations;
 using Data.Models.DB.Project;
 using Data.Models.Services;
 using Data.Services.Account;
+using Data_Path.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,8 +22,12 @@ namespace Search.Controllers.API.v1
     /// Поиск
     /// </summary>
     [ApiController]
+    [ApiVersion("1.0")]
     [DisplayName("search")]
-    [Route("api/search")]
+    [SetRoute]
+#if RELEASE
+    [Authorize]
+#endif
     public class SearchController : ControllerBase
     {
         protected IBaseEntityRepository<FullProject> _fullProjectRepository;

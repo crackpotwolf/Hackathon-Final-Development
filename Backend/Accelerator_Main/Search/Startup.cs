@@ -1,8 +1,9 @@
-﻿
-using Data.Extensions.DI;
+﻿using Data.Extensions.DI;
 using Data.Services.DB;
+using Data_Path.Models;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Search_Data.Models;
+using System.Reflection;
 
 namespace Search
 {
@@ -21,7 +22,22 @@ namespace Search
             #region Базовая инициализация DI
 
             services.AddBaseModuleDI(Configuration.GetConnectionString("DefaultConnection"));
+
+            #endregion
+
+            #region Services
+
             services.Configure<PathConfig>(Configuration.GetSection("PathConfig"));
+
+            #endregion
+
+            #region Swagger
+
+            // Текущее имя проекта
+            var curProjectName = $"{Assembly.GetExecutingAssembly().GetName().Name}";
+
+            // Swagger docs
+            services.AddSwagger(curProjectName);
 
             #endregion
         }

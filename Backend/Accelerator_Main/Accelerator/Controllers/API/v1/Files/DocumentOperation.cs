@@ -3,12 +3,14 @@ using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using Data.Enum.Status;
 using Data.Extensions.Files;
 using Data.Interfaces;
 using Data.Interfaces.Repositories;
-using Data.Models.Configurations;
 using Data.Models.DB.Files;
+using Data.WebClient;
+using Data_Path.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +18,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Search_Data.Services;
 
 namespace Accelerator.Controllers.API.v1.Files
 {
@@ -25,22 +29,32 @@ namespace Accelerator.Controllers.API.v1.Files
     public class DocumentOperation : ControllerBase
     {
         private readonly PathConfig _pathConfig;
+        private readonly ApiConfig _apiConfig;
         private readonly ILogger<IndexModel> _logger;
         private readonly IWebHostEnvironment _appEnvironment;
+
         private readonly IBaseEntityRepository<FileVersion> _fileVersion;
         private readonly IBaseEntityRepository<DocumentInfo> _documentInfo;
+
+        protected readonly IndicesManager _indicesManager;
+
+        private readonly TimeSpan _timeout = TimeSpan.FromHours(5);
 
         /// <inheritdoc />
         public DocumentOperation(ILogger<IndexModel> logger,
             IBaseEntityRepository<DocumentInfo> documentInfo,
             IBaseEntityRepository<FileVersion> fileVersion,
             IWebHostEnvironment appEnvironment,
+            IndicesManager indicesManager,
+            IOptions<ApiConfig> apiConfig,
             IOptions<PathConfig> pathConfig)
         {
             _logger = logger;
             _fileVersion = fileVersion;
             _documentInfo = documentInfo;
+            _apiConfig = apiConfig.Value;
             _pathConfig = pathConfig.Value;
+            _indicesManager = indicesManager;
             _appEnvironment = appEnvironment;
         }
 
@@ -90,7 +104,7 @@ namespace Accelerator.Controllers.API.v1.Files
                         // Парсинг файла
                         var parce = ParsingDocument(sourceDocPath);
 
-                        if (parce.OutputName.Length == 0)
+                        if (parce.Length == 0)
                         {
                             // Error
                             fileVersion.ParceStatus = CompleteStatus.CompleteError;
@@ -103,7 +117,7 @@ namespace Accelerator.Controllers.API.v1.Files
 
                         // Success
                         fileVersion.ParceStatus = CompleteStatus.CompleteSuccess;
-                        fileVersion.PathNameParce = parce.OutputName;
+                        fileVersion.PathNameParce = parce;
 
                         _fileVersion.Update(fileVersion);
 
@@ -176,6 +190,203 @@ namespace Accelerator.Controllers.API.v1.Files
             else
             {
                 _logger.LogError($"Документ был удален, дальнейшая работа невозможна.");
+            }
+        }
+
+        /// <summary>
+        /// Парсинг документа
+        /// </summary>
+        /// <param name="filePath">Путь файла</param>
+        /// <returns></returns>
+        protected string ParsingDocument(string filePath)
+        {
+            try
+            {
+                _logger.LogInformation($"Отправка запроса для парсинга документа для пути: {filePath}");
+
+                // Для замера времени
+                var timeStart = DateTime.UtcNow;
+
+                // Создаём объект WebClient
+                using var webClient = new TimeoutWebClient(_timeout);
+
+                // Добавляем необходимые параметры в виде пар ключ, значение
+                webClient.QueryString.Add("filePath", filePath);
+
+                // Выполняем запрос по адресу и получаем ответ в виде строки
+                var response = webClient.UploadValues(_apiConfig.Parsing, "POST", webClient.QueryString);
+
+                var responseString = Encoding.UTF8.GetString(response);
+
+                _logger.LogInformation($"Файл для пути: {filePath}. - распарсен." +
+                    $"Ответ получен за: {(DateTime.UtcNow - timeStart).TotalSeconds} секунд");
+
+                return responseString;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Не удалось распарсить файл для пути: {filePath}. Ошибка: {ex}");
+
+                throw new Exception($"Не удалось распарсить файл для пути: {filePath}");
+            }
+        }
+
+        /// <summary>
+        /// Индексирование документа
+        /// </summary>
+        /// <param name="filePath">Путь файла</param>
+        /// <param name="guidFile">ID документа</param>
+        /// <returns></returns>
+        protected bool AddDocumentForIndex(string filePath, Guid guidFile)
+        {
+            try
+            {
+                _logger.LogInformation($"Начало отправки запроса индексирования документа для пути: {filePath}");
+
+                // Для замера времени
+                var timeStart = DateTime.UtcNow;
+
+                var url = $"{_apiConfig.Indices}/file/{guidFile}";
+
+                // Создаём объект WebClient
+                using var webClient = new TimeoutWebClient(_timeout);
+
+                // Добавляем необходимые параметры в виде пар ключ, значение
+                webClient.QueryString.Add("filePath", filePath);
+
+                // Выполняем запрос по адресу и получаем ответ в виде строки
+                var response = webClient.UploadValues(url, "POST", webClient.QueryString);
+
+                var responseString = Encoding.UTF8.GetString(response);
+
+                _logger.LogInformation($"Файл проиндексирован, для пути: {filePath}." +
+                    $"Ответ получен за: {(DateTime.UtcNow - timeStart).TotalSeconds} секунд");
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Не удалось проиндексировать файл для пути: {filePath}, " +
+                    $"guid документа: {guidFile}. Ошибка: {ex}");
+
+                throw new Exception($"Не удалось проиндексировать для пути: {filePath}");
+            }
+        }
+
+        /// <summary>
+        /// Обновление индексов документа
+        /// </summary>
+        /// <param name="filePath">Путь файла</param>
+        /// <param name="guidFile">ID документа</param>
+        /// <returns></returns>
+        protected bool UpdateDocumentForIndex(string filePath, Guid guidFile)
+        {
+            try
+            {
+                _logger.LogInformation($"Начало отправки запроса на обновление индексов документа для пути: {filePath}");
+
+                // Для замера времени
+                var timeStart = DateTime.UtcNow;
+
+                var url = $"{_apiConfig.Indices}/file/{guidFile}";
+
+                // Создаём объект WebClient
+                using var webClient = new TimeoutWebClient(_timeout);
+
+                // Добавляем необходимые параметры в виде пар ключ, значение
+                webClient.QueryString.Add("filePath", filePath);
+
+                // Выполняем запрос по адресу и получаем ответ в виде строки
+                var response = webClient.UploadValues(url, "PUT", webClient.QueryString);
+
+                var responseString = Encoding.UTF8.GetString(response);
+
+                _logger.LogInformation($"Индексы файла обновлены, для пути: {filePath}." +
+                    $"Ответ получен за: {(DateTime.UtcNow - timeStart).TotalSeconds} секунд");
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Не удалось обновить индексы файла для пути: {filePath}, " +
+                    $"guid документа: {guidFile}. Ошибка: {ex}");
+
+                throw new Exception($"Не удалось обновить индексы для пути: {filePath}");
+            }
+        }
+
+        /// <summary>
+        /// Удаление индексов документа
+        /// </summary>
+        /// <param name="guidFile"></param>
+        /// <returns></returns>
+        protected bool DeleteDocumentForIndex(Guid guidFile)
+        {
+            try
+            {
+                _logger.LogInformation($"Отправка запроса для удаления индекса документа файла: {guidFile}");
+
+                // Для замера времени
+                var timeStart = DateTime.UtcNow;
+
+                var url = $"{_apiConfig.Indices}/file/{guidFile}";
+
+                // Создаём объект WebClient
+                using var webClient = new TimeoutWebClient(_timeout);
+
+                // Выполняем запрос по адресу и получаем ответ в виде строки
+                var response = webClient.UploadValues(url, "Delete", webClient.QueryString);
+
+                var responseString = Encoding.UTF8.GetString(response);
+
+                _logger.LogInformation($"Индексы файла удалены, guid документа: {guidFile}." +
+                    $"Ответ получен за: {(DateTime.UtcNow - timeStart).TotalSeconds} секунд");
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Не удалось удалить индексы файла, " +
+                    $"id документа: {guidFile}. Ошибка: {ex}");
+
+                throw new Exception($"Не удалось удалить индексы для файла: {guidFile}");
+            }
+        }
+
+        /// <summary>
+        /// Удаление индексов всех документов
+        /// </summary>
+        /// <returns></returns>
+        protected bool DeleteAllDocuments()
+        {
+            try
+            {
+                _logger.LogInformation("Отправка запроса для удаления всех индексов");
+
+                // Для замера времени
+                var timeStart = DateTime.UtcNow;
+
+                var url = $"{_apiConfig.Indices}";
+
+                // Создаём объект WebClient
+                using var webClient = new TimeoutWebClient(_timeout);
+
+                // Выполняем запрос по адресу и получаем ответ в виде строки
+                var response = webClient.UploadValues(url, "Delete", webClient.QueryString);
+
+                var responseString = Encoding.UTF8.GetString(response);
+
+                _logger.LogInformation($"Индексы удалены." +
+                    $"Ответ получен за: {(DateTime.UtcNow - timeStart).TotalSeconds} секунд");
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Не удалось удалить все индексы" +
+                    $"Ошибка: {ex}");
+
+                throw new Exception($"Не удалось удалить все индексы");
             }
         }
 

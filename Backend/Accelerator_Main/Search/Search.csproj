@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Data\Data.csproj" />
+    <ProjectReference Include="..\Data_Path\Data_Path.csproj" />
     <ProjectReference Include="..\Search_Data\Search_Data.csproj" />
   </ItemGroup>
 

@@ -1,6 +1,5 @@
 ﻿using Data.Attributes;
 using Data.Interfaces.Repositories;
-using Data.Models.Configurations;
 using Data.Models.DB.Files;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
@@ -13,15 +12,21 @@ using Data.Extensions.Files;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Data.Models.ModelViews.Files;
+using Data_Path.Models;
+using Search_Data.Services;
 
 namespace Accelerator.Controllers.API.v1.Files
 {
     /// <summary>
     /// API загрузки документа
     /// </summary>
+    [ApiController]
     [ApiVersion("1.0")]
     [DisplayName("files")]
     [SetRoute]
+#if RELEASE
+    [Authorize]
+#endif
     public class FileController : DocumentOperation
     {
         private readonly IBaseEntityRepository<DocumentInfo> _documentInfo;
@@ -32,13 +37,15 @@ namespace Accelerator.Controllers.API.v1.Files
 
         /// <inheritdoc />
         public FileController(ILogger<IndexModel> logger,
-            IBaseEntityRepository<Project> project,
-            IWebHostEnvironment appEnvironment,
             IBaseEntityRepository<FileVersion> fileVersion,
             IBaseEntityRepository<DocumentInfo> documentInfo,
+            IBaseEntityRepository<Project> project,
+            IWebHostEnvironment appEnvironment,
+            IndicesManager indicesManager,
+            IOptions<ApiConfig> apiConfig,
             IOptions<PathConfig> pathConfig)
             : base(logger, documentInfo, fileVersion,
-                appEnvironment, pathConfig)
+                appEnvironment, indicesManager, apiConfig, pathConfig)
         {
             _documentInfo = documentInfo;
             _fileVersion = fileVersion;

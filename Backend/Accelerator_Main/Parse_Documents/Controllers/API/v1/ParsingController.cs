@@ -1,14 +1,21 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Data.Attributes;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 using Swashbuckle.AspNetCore.Annotations;
+using System.ComponentModel;
 
 namespace Parse_Documents.Controllers.API.v1
 {
     /// <summary>
     /// Парсинг
     /// </summary>
-    [Route("api/parsing/")]
     [ApiController]
+    [ApiVersion("1.0")]
+    [DisplayName("parsing")]
+    [SetRoute]
+#if RELEASE
+    [Authorize]
+#endif
     public class ParsingController : _AbstractController
     {
         private readonly ILogger<IndexModel> _logger;

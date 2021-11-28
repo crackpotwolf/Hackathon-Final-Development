@@ -6,6 +6,7 @@ using Data.Services.Account;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using MoreLinq;
+using Data.Extensions.Files;
 
 namespace Data.Services.DB
 {

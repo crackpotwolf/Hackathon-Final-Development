@@ -1,9 +1,11 @@
 ﻿using Data.Extensions.DI;
-using Data.Models.Configurations;
 using Data.Services.DB;
+using Data_Path.Models;
 using Hangfire;
+using Hangfire.Dashboard;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using System.Reflection;
 
 namespace Accelerator
 {
@@ -25,8 +27,22 @@ namespace Accelerator
 
             #endregion
 
+            #region Services
 
             services.Configure<PathConfig>(Configuration.GetSection("PathConfig"));
+            services.Configure<ApiConfig>(Configuration.GetSection("ApiConfig"));
+
+            #endregion
+
+            #region Swagger
+
+            // Текущее имя проекта
+            var curProjectName = $"{Assembly.GetExecutingAssembly().GetName().Name}";
+
+            // Swagger docs
+            services.AddSwagger(curProjectName);
+
+            #endregion
 
             #region Hangfire
 
@@ -57,10 +73,29 @@ namespace Accelerator
         {
             app.UseBaseServices(env, provider);
 
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions()
+            {
+                Authorization = new[] { new AllowAllConnectionsFilter() },
+                IgnoreAntiforgeryToken = true
+            });
+
             #region Init
 
 
             #endregion
+        }
+
+        /// <summary>
+        /// Проверка доступа для планировщика
+        /// </summary>
+        public class AllowAllConnectionsFilter : IDashboardAuthorizationFilter
+        {
+            public bool Authorize(DashboardContext context)
+            {
+                // Allow outside
+
+                return true;
+            }
         }
     }
 }

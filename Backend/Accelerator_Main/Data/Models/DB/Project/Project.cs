@@ -82,6 +82,11 @@ namespace Data.Models.DB.Project
         /// </summary>
         public string ExpertiseReport { get; set; }
 
+        /// <summary>
+        /// Имя пути
+        /// </summary>
+        public string PathName { get; set; }
+
         public Guid ApplicantId { get; set; }
 
         public virtual Applicant Applicant { get; set; }

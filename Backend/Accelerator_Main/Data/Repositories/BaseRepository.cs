@@ -16,7 +16,7 @@ namespace Data.Repositories
     /// Базовый репозиторий
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class BaseEntityRepository<T> : IBaseEntityRepository<T> where T : class, IBaseEntity
+    public partial class BaseEntityRepository<T> : IBaseEntityRepository<T> where T : class, IBaseEntity
     {
         private readonly AcceleratorContext _db;
         private readonly ILogger<IBaseEntityRepository<T>> _logger;

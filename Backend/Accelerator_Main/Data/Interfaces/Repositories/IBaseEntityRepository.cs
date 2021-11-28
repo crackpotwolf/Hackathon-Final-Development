@@ -21,6 +21,7 @@ namespace Data.Interfaces.Repositories
         bool UpdateRange(IEnumerable<T> models);
         bool Remove(T model);
         bool Remove(Guid Guid);
+        bool RemoveCascade(T model);
         bool RemoveRange(IEnumerable<T> models);
         bool RemoveRange(IEnumerable<Guid> guids);
         bool Delete(T model);

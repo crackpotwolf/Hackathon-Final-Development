@@ -1,4 +1,5 @@
 ﻿using Data.Models.DB.Account;
+using Data.Models.DB.Files;
 using Data.Models.DB.Project;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -52,6 +53,13 @@ namespace Data
         /// Для теста
         /// </summary>
         public DbSet<FullProject> FullProjects { get; set; }
+
+        #endregion
+
+        #region Files
+
+        public virtual DbSet<DocumentInfo> DocumentInfos { get; set; }
+        public virtual DbSet<FileVersion> FileVersions { get; set; }
 
         #endregion
 

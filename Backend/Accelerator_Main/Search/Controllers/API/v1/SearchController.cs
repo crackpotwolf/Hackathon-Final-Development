@@ -2,6 +2,7 @@
 using Data.Attributes;
 using Data.Extensions;
 using Data.Interfaces.Repositories;
+using Data.Models.Configurations;
 using Data.Models.DB.Project;
 using Data.Models.Services;
 using Data.Services.Account;
@@ -13,49 +14,136 @@ using Microsoft.Extensions.Options;
 using Search_Data.Models;
 using Search_Data.Search;
 using Swashbuckle.AspNetCore.Annotations;
+using System.ComponentModel;
 
 namespace Search.Controllers.API.v1
 {
     /// <summary>
-    /// Контроллер заявок
+    /// Поиск
     /// </summary>
     [ApiController]
-    [ApiVersion("1.0")]
-    [SetRoute]
-    public class SearchController : Controller
+    [DisplayName("search")]
+    [Route("api/search")]
+    public class SearchController : ControllerBase
     {
-        protected IBaseEntityRepository<Applicant> _applicantsRepository;
-        protected IBaseEntityRepository<Company> _companiesRepository;
-        protected IBaseEntityRepository<Project> _projectsRepository;
         protected IBaseEntityRepository<FullProject> _fullProjectRepository;
 
-        private readonly PathConfig _pathConfig;
-        protected readonly EmailService _emailService;
         private readonly ILogger<IndexModel> _logger;
-        protected readonly UserManager _userManager;
-        protected readonly IMapper _mapper;
+        private readonly PathConfig _pathConfig;
 
-        public SearchController(IBaseEntityRepository<Applicant> applicantsRepository,
-            IBaseEntityRepository<Company> companiesRepository,
-            IBaseEntityRepository<Project> projectsRepository,
+        /// <inheritdoc />
+        public SearchController(ILogger<IndexModel> logger,
             IBaseEntityRepository<FullProject> fullProjectRepository,
-            IOptions<PathConfig> pathConfig,
-            EmailService emailService,
-            ILogger<IndexModel> logger,
-            UserManager userManager,
-            IMapper mapper)
+            IOptions<PathConfig> pathConfig)
         {
-            _applicantsRepository = applicantsRepository;
-            _companiesRepository = companiesRepository;
-            _projectsRepository = projectsRepository;
             _fullProjectRepository = fullProjectRepository;
-            _emailService = emailService;
-            _userManager = userManager;
-            _mapper = mapper;
-            _logger = logger;
             _pathConfig = pathConfig.Value;
+            _logger = logger;
         }
 
+        /// <summary>
+        /// Поиск объектов по ключевым словам
+        /// </summary>
+        /// <param name="inputText">Текст для поиска</param>
+        /// <returns>Название файлов с совпадениями в порядке релевантности</returns>
+        [HttpGet("guids/{inputText}")]
+        [DisableRequestSizeLimit]
+        [Produces("application/json")]
+        [SwaggerResponse(200, "Название файлов с совпадениями в порядке релевантности", typeof(Dictionary<Guid, float>))]
+        [ProducesResponseType(typeof(Exception), 400)]
+        public IActionResult SearchGuidsByText(string inputText)
+        {
+            try
+            {
+                _logger.LogInformation($"Начало поиска объектов.");
 
+                // Для замера времени
+                DateTime timeStart = DateTime.UtcNow;
+
+                // Инициализация
+                _logger.LogInformation($"Инициализация.");
+
+                var search = new WordSearch(_pathConfig.DocumentsIndexes);
+
+                // Поиск
+                _logger.LogInformation($"Поиск. {inputText}");
+
+                var result = search.Search(inputText);
+
+                // Результаты
+                _logger.LogInformation($"Запись результатов. {inputText}");
+
+                _logger.LogInformation($"Запрос: '{result.Query}' всего: {result.TotalHits}. {inputText}");
+
+                Dictionary<Guid, float> results = new Dictionary<Guid, float>();
+
+                foreach (var item in result.Hits)
+                {
+                    results.Add(item.Guid, item.Score);
+
+                    _logger.LogInformation($"{item.Guid} --- Score: {item.Score}. {inputText}");
+                }
+
+                _logger.LogInformation($"Поиск завершен за: {(DateTime.UtcNow - timeStart).TotalSeconds} секунд. {inputText}");
+
+                return Ok(results);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Не удалось выполнить поиск по документам. " +
+                    $"{inputText} Ошибка: {ex.Message}");
+
+                return StatusCode(500, "Не удалось выполнить поиск по документам");
+            }
+        }
+
+        /// <summary>
+        /// Поиск объектов по ключевым словам
+        /// </summary>
+        /// <param name="inputText">Текст для поиска</param>
+        /// <returns>Название файлов с совпадениями в порядке релевантности</returns>
+        [HttpGet("objects/{inputText}")]
+        [DisableRequestSizeLimit]
+        [Produces("application/json")]
+        [SwaggerResponse(200, "Объекты с совпадениями в порядке релевантности", typeof(List<Project>))]
+        [ProducesResponseType(typeof(Exception), 400)]
+        public IActionResult SearchObjectsByText(string inputText)
+        {
+            try
+            {
+                _logger.LogInformation($"Начало поиска объектов.");
+
+                // Для замера времени
+                DateTime timeStart = DateTime.UtcNow;
+
+                // Инициализация
+                _logger.LogInformation($"Инициализация.");
+
+                var search = new WordSearch(_pathConfig.DocumentsIndexes);
+
+                // Поиск
+                _logger.LogInformation($"Поиск. {inputText}");
+
+                var result = search.Search(inputText);
+
+                // Результаты
+                _logger.LogInformation($"Запись результатов. {inputText}");
+
+                _logger.LogInformation($"Запрос: '{result.Query}' всего: {result.TotalHits}. {inputText}");
+
+                var results = _fullProjectRepository.GetListQuery().Where(p => result.Hits.Select(t => t.Guid).Contains(p.Guid)).ToList();
+
+                _logger.LogInformation($"Поиск завершен за: {(DateTime.UtcNow - timeStart).TotalSeconds} секунд. {inputText}");
+
+                return Ok(results);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Не удалось выполнить поиск по документам. " +
+                    $"{inputText} Ошибка: {ex.Message}");
+
+                return StatusCode(500, "Не удалось выполнить поиск по документам");
+            }
+        }
     }
 }

@@ -19,6 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Hangfire" Version="1.7.27" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.7.27" />
+    <PackageReference Include="Hangfire.PostgreSql" Version="1.9.3" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational.Design" Version="1.1.6" />
   </ItemGroup>

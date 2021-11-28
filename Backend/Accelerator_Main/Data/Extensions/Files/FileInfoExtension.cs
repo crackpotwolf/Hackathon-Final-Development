@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Data.Extensions
+namespace Data.Extensions.Files
 {
     /// <summary>
     /// Расширения для работы с файлами

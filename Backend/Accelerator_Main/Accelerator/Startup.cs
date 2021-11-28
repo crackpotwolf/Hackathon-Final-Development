@@ -1,11 +1,11 @@
 ﻿using Data.Extensions.DI;
-using Data.Services.DB;
-using Data;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Search_Data.Models;
 using Data.Models.Configurations;
+using Data.Services.DB;
+using Hangfire;
+using Hangfire.PostgreSql;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
-namespace Parse_Documents
+namespace Accelerator
 {
     public class Startup
     {
@@ -22,7 +22,29 @@ namespace Parse_Documents
             #region Базовая инициализация DI
 
             services.AddBaseModuleDI(Configuration.GetConnectionString("DefaultConnection"));
+
+            #endregion
+
+
             services.Configure<PathConfig>(Configuration.GetSection("PathConfig"));
+
+            #region Hangfire
+
+            // Add Hangfire services
+            services.AddHangfire(configuration => configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UsePostgreSqlStorage(Configuration.GetConnectionString("HangfireConnection"), new PostgreSqlStorageOptions
+                {
+                    DistributedLockTimeout = TimeSpan.FromMinutes(1)
+                }));
+
+            // Add the processing server as IHostedService
+            services.AddHangfireServer(options =>
+            {
+                options.WorkerCount = 5;
+            });
 
             #endregion
         }

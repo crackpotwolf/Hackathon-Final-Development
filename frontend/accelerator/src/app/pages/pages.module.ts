@@ -5,8 +5,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatListModule} from '@angular/material/list';
 import {MatToolbarModule} from '@angular/material/toolbar';
 
-// import {LayoutsModule} from "../layouts/layouts.module";
-import {PERFECT_SCROLLBAR_CONFIG, PerfectScrollbarConfigInterface} from 'ngx-perfect-scrollbar/public-api';
+import {PERFECT_SCROLLBAR_CONFIG, PerfectScrollbarConfigInterface} from 'ngx-perfect-scrollbar';
 
 import {DemoMaterialModule} from "../core/material-module";
 import {TableModule} from "primeng/table";
@@ -26,7 +25,7 @@ import {DialogModule} from "primeng/dialog";
 import {ConfirmPopupModule} from "primeng/confirmpopup";
 import {ConfirmationService, MessageService} from "primeng/api";
 import {InputMaskModule} from "primeng/inputmask";
-import {NgxMaskModule} from "ngx-mask/index";
+import {NgxMaskModule} from "ngx-mask";
 import {InputTextareaModule} from "primeng/inputtextarea";
 import {FileUploadModule} from "primeng/fileupload";
 import {HTTP_INTERCEPTORS} from "@angular/common/http";
@@ -34,7 +33,7 @@ import {AuthInterceptor} from "../../interceptors/auth/auth.interceptor";
 import {ToastModule} from "primeng/toast";
 import {AppModule} from "../app.module";
 import {KnobModule} from "primeng/knob";
-import {NgCircleProgressModule} from "ng-circle-progress/public-api";
+import {NgCircleProgressModule} from "ng-circle-progress";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {BlockUIModule} from "primeng/blockui";
 import {TagModule} from "primeng/tag";
@@ -48,6 +47,8 @@ import {GalleriaModule} from "primeng/galleria";
 import {SkeletonModule} from "primeng/skeleton";
 import {DividerModule} from "primeng/divider";
 import { MainComponent } from './main/main.component';
+import {PagesRoutingModule} from "./pages-routing.module";
+import {LayoutsModule} from "../layouts/layouts.module";
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -67,7 +68,7 @@ const DragConfig = {
   ],
   imports: [
     CommonModule,
-    // LayoutsModule,
+    LayoutsModule,
 
     // NG Material Modules
     MatSidenavModule,
@@ -112,6 +113,7 @@ const DragConfig = {
     GalleriaModule,
     SkeletonModule,
     DividerModule,
+    PagesRoutingModule,
   ],
   providers: [
     {

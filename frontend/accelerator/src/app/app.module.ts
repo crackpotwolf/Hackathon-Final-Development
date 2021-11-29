@@ -13,6 +13,8 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {DemoMaterialModule} from "./core/material-module";
 import {NoopAnimationsModule} from "@angular/platform-browser/animations";
 import {AuthInterceptor} from "../interceptors/auth/auth.interceptor";
+import {LayoutsModule} from "./layouts/layouts.module";
+import {PagesModule} from "./pages/pages.module";
 
 export function createTranslateLoader(http: HttpClient): any {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -28,6 +30,10 @@ export function createTranslateLoader(http: HttpClient): any {
     AppRoutingModule,
     HttpClientModule,
     NoopAnimationsModule,
+    DemoMaterialModule,
+    ReactiveFormsModule,
+    PagesModule,
+    LayoutsModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -35,8 +41,6 @@ export function createTranslateLoader(http: HttpClient): any {
         deps: [HttpClient]
       }
     }),
-    DemoMaterialModule,
-    ReactiveFormsModule,
   ],
   providers: [
     {

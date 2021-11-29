@@ -148,7 +148,7 @@ namespace Search.Controllers.API.v1
 
                 search.DeleteAllIndexes();
 
-                projects.ForEach(p => p.AddSearchableObjectToIndex(p.Guid, search));
+                projects.ForEach(p => p.AddSearchableObjectToIndexSeparately(p.Guid, search));
 
                 search.CommitChanges();
 

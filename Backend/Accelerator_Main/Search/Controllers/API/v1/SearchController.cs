@@ -67,7 +67,7 @@ namespace Search.Controllers.API.v1
                 // Инициализация
                 _logger.LogInformation($"Инициализация.");
 
-                var search = new WordSearch(_pathConfig.DocumentsIndexes);
+                var search = new WordSearch(_pathConfig.DocumentsIndexes, typeof(FullProject).GetSerachableFieldsNames());
 
                 // Поиск
                 _logger.LogInformation($"Поиск. {inputText}");
@@ -123,7 +123,7 @@ namespace Search.Controllers.API.v1
                 // Инициализация
                 _logger.LogInformation($"Инициализация.");
 
-                var search = new WordSearch(_pathConfig.DocumentsIndexes);
+                var search = new WordSearch(_pathConfig.DocumentsIndexes, typeof(FullProject).GetSerachableFieldsNames());
 
                 // Поиск
                 _logger.LogInformation($"Поиск. {inputText}");

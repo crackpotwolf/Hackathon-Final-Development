@@ -109,7 +109,7 @@ namespace Accelerator.Controllers.API.v1.Projects
                 var search = new WordSearch(_pathConfig.DocumentsIndexes);
 
                 var res = _fullProjectRepository.AddRange(projects);
-                res.ToList().ForEach(p => p.AddSearchableObjectToIndex(p.Guid, search));
+                res.ToList().ForEach(p => p.AddSearchableObjectToIndexSeparately(p.Guid, search));
                 search.CommitChanges();
 
                 return Ok(res.Count(p => p.Guid != Guid.Empty));

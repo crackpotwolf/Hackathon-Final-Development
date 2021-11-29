@@ -20,6 +20,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using Search_Data.Services;
 using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
@@ -279,6 +280,7 @@ namespace Data.Extensions.DI
             services.AddTransient(typeof(InitDB), typeof(InitDB));
             services.AddTransient(typeof(UserManager), typeof(UserManager));
             services.AddTransient(typeof(EmailService), typeof(EmailService));
+            services.AddTransient(typeof(IndicesManager), typeof(IndicesManager));
         }
     }
 }

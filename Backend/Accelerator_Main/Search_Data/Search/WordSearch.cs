@@ -29,7 +29,6 @@ namespace Search_Data.Search
 		private readonly QueryParser _queryParser;
 		private readonly IndexWriter _writer;
 		private readonly Analyzer _analyzer;
-
 		private const string keyField = "Guid";
 
 		public WordSearch(string indexPath)
@@ -58,7 +57,44 @@ namespace Search_Data.Search
 			_searchManager = new SearcherManager(_writer, true, null);
 
 			// создаем псевдоним для полей: "t" -> "Text"; 
-			_queryParser = new AliasMultiFieldQueryParser(MATCH_LUCENE_VERSION, new[] { "Text" }, _analyzer,
+			_queryParser = new AliasMultiFieldQueryParser(MATCH_LUCENE_VERSION, new[] { "Text", "Name" }, _analyzer,
+				new Dictionary<string, string>()
+				{
+					{ "t", "Text" }
+				});
+		}
+
+		/// <summary>
+		/// Поиск по списку параметров
+		/// </summary>
+		/// <param name="indexPath"></param>
+		public WordSearch(string indexPath, string[] fields)
+		{
+			//_analyzer = new EnhEnglishAnalyzer(MATCH_LUCENE_VERSION);
+
+			_analyzer = new MultiFieldAnalyzerWrapper(
+				defaultAnalyzer: new EnhEnglishAnalyzer(MATCH_LUCENE_VERSION, true),
+				new[]
+				{
+					(
+						new[] { "" },
+						Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+						{
+							var source = new KeywordTokenizer(reader);
+							TokenStream result = new ASCIIFoldingFilter(source);
+							result = new LowerCaseFilter(MATCH_LUCENE_VERSION, result);
+							return new TokenStreamComponents(source, result);
+						})
+					)
+				});
+
+			//_writer = new IndexWriter(indexPath, new IndexWriterConfig(MATCH_LUCENE_VERSION, _analyzer));
+			_writer = new IndexWriter(FSDirectory.Open(indexPath), new IndexWriterConfig(MATCH_LUCENE_VERSION, _analyzer));
+
+			_searchManager = new SearcherManager(_writer, true, null);
+
+			// создаем псевдоним для полей: "t" -> "Text"; 
+			_queryParser = new AliasMultiFieldQueryParser(MATCH_LUCENE_VERSION, fields, _analyzer,
 				new Dictionary<string, string>()
 				{
 					{ "t", "Text" }
@@ -109,6 +145,18 @@ namespace Search_Data.Search
 
 			// Добавление документа
 			_writer.AddDocument(doc);
+
+			_writer.ForceMerge(_writer.NumDocs);
+		}
+
+		/// <summary>
+		/// Добавление документа (Lucene)
+		/// </summary>
+		/// <param name="document">Документ</param>
+		public void AddIndex(Document document)
+		{
+			// Добавление документа
+			_writer.AddDocument(document);
 
 			_writer.ForceMerge(_writer.NumDocs);
 		}

@@ -3,6 +3,8 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Router} from "@angular/router";
 import {HttpClient} from "@angular/common/http";
 import {AuthService} from "../../../../services/auth/auth.service";
+import {WrapperComponent} from "../../../layouts/wrapper/wrapper.component";
+import {MessageService} from "primeng/api";
 
 @Component({
   selector: 'app-login',
@@ -20,6 +22,7 @@ export class LoginComponent implements OnInit {
   constructor(private fb: FormBuilder,
               private authService: AuthService,
               private http: HttpClient,
+              private messageService: MessageService,
               private router: Router) {
     this.form = this.fb.group({
       email: ['test@test.ru', Validators.required],
@@ -69,5 +72,12 @@ export class LoginComponent implements OnInit {
       }
     }
     return '';
+  }
+
+  notImplemented(event?: MouseEvent) {
+    if (event) {
+      event.preventDefault();
+    }
+    WrapperComponent.notImplemented(this.messageService)
   }
 }

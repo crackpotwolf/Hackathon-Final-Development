@@ -4,7 +4,7 @@ import {BrowserModule} from '@angular/platform-browser';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {LoginComponent} from "./pages/account/login/login.component";
-import {FilterMatchMode, PrimeNGConfig} from "primeng/api";
+import {FilterMatchMode, MessageService, PrimeNGConfig} from "primeng/api";
 import {TranslateLoader, TranslateModule, TranslateService} from "@ngx-translate/core";
 import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from "@angular/common/http";
 import {TranslateHttpLoader} from "@ngx-translate/http-loader";
@@ -15,6 +15,7 @@ import {NoopAnimationsModule} from "@angular/platform-browser/animations";
 import {AuthInterceptor} from "../interceptors/auth/auth.interceptor";
 import {LayoutsModule} from "./layouts/layouts.module";
 import {PagesModule} from "./pages/pages.module";
+import {ToastModule} from "primeng/toast";
 
 export function createTranslateLoader(http: HttpClient): any {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -41,6 +42,7 @@ export function createTranslateLoader(http: HttpClient): any {
         deps: [HttpClient]
       }
     }),
+    ToastModule,
   ],
   providers: [
     {
@@ -54,7 +56,9 @@ export function createTranslateLoader(http: HttpClient): any {
 
 export class AppModule implements OnInit {
 
-  constructor(private config: PrimeNGConfig, private translateService: TranslateService) {
+  constructor(private config: PrimeNGConfig,
+              private messageService: MessageService,
+              private translateService: TranslateService) {
     this.config.ripple = true;
     this.translateService.addLangs(['ru', 'en']);
     this.translateService.use('ru');

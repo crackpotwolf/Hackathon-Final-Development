@@ -1,30 +1,27 @@
-<!--<p-toast></p-toast>-->
+<p-toast></p-toast>
 
 
 <header id="page-topbar">
-  <div class="navbar-header d-flex justify-content-between">
-    <div>
-LOGO -->
+  <div class="navbar-header d-flex justify-content-between modal-header py-0">
+    <div class="h-100">
+      <!--LOGO-->
+      <img src="assets/images/logo.png"  class="h-100"/>
     </div>
     <div class="dropdown d-flex h-100">
-      <!-- Кнопка уведомлний -->
-      <a class="d-flex align-items-center btn btn-hover-light" [routerLink]="'/notifications'">
-
-        <i *ngIf="!countNewNotifications"
-           class="pi pi-bell p-mr-4 p-text-secondary"
-           style="font-size: 1.5rem"></i>
-        <i *ngIf="countNewNotifications" class="pi pi-bell p-mr-4 p-text-secondary" pBadge
-           style="font-size: 1.5rem" [value]="countNewNotifications.toString()"></i>
-
-      </a>
+      <!-- Кнопка "Поиск" -->
+      <button class="btn btn-hover-light" mat-button (click)="onClickSearch($event)"><i class="fas fa-search"></i>
+      </button>
+      <!-- Кнопка "Избранное" -->
+      <button class="btn btn-hover-light" mat-button (click)="onClickFavorites($event)"><i class="far fa-star"></i>
+      </button>
 
       <!-- Аккаунт -->
       <button class="btn btn-hover-light" mat-button [matMenuTriggerFor]="menu"><i class="far fa-user-circle"
                                                                                    style="font-size: 1.5rem"></i>
       </button>
       <mat-menu #menu="matMenu">
-        <!--        <button mat-menu-item><i class="fas fa-user mr-1"></i> Профиль</button>-->
-        <!--        <p-divider></p-divider>-->
+        <button mat-menu-item><i class="fas fa-user mr-1"></i> Профиль</button>
+        <p-divider></p-divider>
         <button mat-menu-item class="color-red" (click)="logout()"><i class="fas fa-power-off mr-1"></i> Выход</button>
       </mat-menu>
     </div>

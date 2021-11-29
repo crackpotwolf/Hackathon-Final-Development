@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {MessageService} from "primeng/api";
 
 @Component({
   selector: 'app-wrapper',
@@ -7,7 +8,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class WrapperComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private messageService: MessageService
+  ) {
+  }
 
   ngOnInit(): void {
     document.body.setAttribute('data-sidebar', 'dark');
@@ -16,6 +20,7 @@ export class WrapperComponent implements OnInit {
     document.body.removeAttribute('data-topbar');
     document.body.classList.remove('auth-body-bg');
   }
+
   /**
    * On mobile toggle button clicked
    */
@@ -33,5 +38,16 @@ export class WrapperComponent implements OnInit {
    */
   onSettingsButtonClicked() {
     document.body.classList.toggle('right-bar-enabled');
+  }
+
+
+  /**
+   * Уведомление "Еще не рализовано"
+   */
+  static notImplemented(messageService: MessageService) {
+    messageService.add({
+      severity: 'info',
+      summary: 'Ещё не рализовано',
+    })
   }
 }

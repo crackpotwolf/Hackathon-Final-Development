@@ -1,13 +1,13 @@
 <div id="layout-wrapper" class="position-relative">
-  <app-topbar (mobileMenuButtonClicked)="onToggleMobileMenu()" (settingsButtonClicked)="onSettingsButtonClicked()">
+  <app-topbar (settingsButtonClicked)="onSettingsButtonClicked()">
   </app-topbar>
-<!--  <app-sidebar></app-sidebar>-->
+  <!--  <app-sidebar></app-sidebar>-->
   <!-- ============================================================== -->
   <!-- Start right Content here -->
   <!-- ============================================================== -->
   <div class="main-content">
     <div class="page-content min-vh-100">
-      <div>
+      <div class="p-2">
 
         <router-outlet></router-outlet>
       </div>
@@ -16,6 +16,6 @@
     <app-footer></app-footer>
   </div>
 
-  <app-rightsidebar></app-rightsidebar>
+  <!--  <app-rightsidebar></app-rightsidebar>-->
 </div>
 <!-- END layout-wrapper -->

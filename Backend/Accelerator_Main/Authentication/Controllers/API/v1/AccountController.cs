@@ -57,7 +57,7 @@ namespace Authentication.Controllers.API.v1
                 .ThenInclude(p => p.Role);
 
         /// <summary>
-        /// [AllowAnonymous] Авторизация - получение токена доступа
+        /// Авторизация - получение токена доступа
         /// </summary>
         /// <param name="model">Логин и пароль</param>
         /// <returns></returns>
@@ -87,7 +87,6 @@ namespace Authentication.Controllers.API.v1
 
         /// <summary>
         /// Удаление пользователя
-        /// Доступно для ролей: Admin
         /// </summary>
         /// <param name="userGuid">Идентификатор пользователя</param>
         /// <returns></returns>
@@ -109,12 +108,11 @@ namespace Authentication.Controllers.API.v1
         }
 
         /// <summary>
-        /// Регистрация пользователя
-        /// Доступно для ролей: Admin
+        /// Создание пользователя
         /// </summary>
         /// <param name="model">Информация о пользователе</param>
         /// <returns>Токен доступа</returns>
-        [HttpPost("registration")]
+        [HttpPost("creation")]
         [Authorize(Roles = "Admin")]
         [SwaggerResponse(200, "Токен", typeof(Token))]
         [SwaggerResponse(400, "Неверные данные или пользователь уже сущестует. Содержит информацию об ошибках.", typeof(List<AuthStatus>))]
@@ -142,13 +140,12 @@ namespace Authentication.Controllers.API.v1
         }
 
         /// <summary>
-        /// Создание пользователя
-        /// Доступно для ролей: Admin
+        /// Регистрация пользователя
         /// </summary>
         /// <param name="model">Информация о пользователе</param>
         /// <returns></returns>
-        [HttpPost("creation")]
-        [Authorize(Roles = "Admin")]
+        [HttpPost("registration")]
+        [AllowAnonymous]
         [SwaggerResponse(200, "Guid нового пользователя, на его email отправлена ссылка для установки пароля", typeof(Guid))]
         [SwaggerResponse(400, "Неверные данные или пользователь уже существует. Содержит информацию об ошибках", typeof(List<AuthStatus>))]
         [SwaggerResponse(500, "Неизвестная ошибка")]
@@ -156,9 +153,16 @@ namespace Authentication.Controllers.API.v1
         {
             try
             {
+                // Название роли внешнего пользователя
+                var nameExternalUser = "External";
+
+                var roles = _rolesRepository.GetListQuery()
+                    .Where(r => r.Name.Contains(nameExternalUser))
+                    .ToList();
+
                 var user = _mapper.Map<User>(model);
 
-                var res = await _userManager.CreateUserAsync(user);
+                var res = await _userManager.CreateUserAsync(user, roles);
 
                 if (res.Errors.Count != 0)
                     return BadRequest(res.Errors);
@@ -175,7 +179,7 @@ namespace Authentication.Controllers.API.v1
         }
 
         /// <summary>
-        /// Пинг [AllowAnonymous]
+        /// Пинг
         /// </summary>
         /// <returns></returns>
         [HttpGet("ping")]
@@ -183,14 +187,14 @@ namespace Authentication.Controllers.API.v1
         public IActionResult Ping() => Ok("Pong");
 
         /// <summary>
-        /// Пинг [Authorize]
+        /// Пинг
         /// </summary>
         /// <returns></returns>
         [HttpGet("ping-auth")]
         public IActionResult PingAuth() => Ok($"Hello {User.Identity.Name}");
 
         /// <summary>
-        /// [AllowAnonymous] Сброс пароля
+        /// Сброс пароля
         /// </summary>
         /// <param name="email">Email адрес пользователя</param>
         /// <returns></returns>
@@ -223,7 +227,7 @@ namespace Authentication.Controllers.API.v1
         }
 
         /// <summary>
-        /// [AllowAnonymous] Подтверждление адреса электронной почты
+        /// Подтверждление адреса электронной почты
         /// </summary>
         /// <param name="model">Информация для подтверждения Email</param>
         /// <returns></returns>
@@ -246,7 +250,7 @@ namespace Authentication.Controllers.API.v1
         }
 
         /// <summary>
-        /// [AllowAnonymous] Установка пароля для нового пользователя
+        /// Установка пароля для нового пользователя
         /// </summary>
         /// <param name="model">Данные для установки пароля</param>
         /// <returns></returns>
@@ -264,7 +268,7 @@ namespace Authentication.Controllers.API.v1
         }
 
         /// <summary>
-        /// [AllowAnonymous] Смена пароля пользователя
+        /// Смена пароля пользователя
         /// </summary>
         /// <param name="model">Данные для смены пароля</param>
         /// <returns></returns>

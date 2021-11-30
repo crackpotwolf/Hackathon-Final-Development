@@ -6,7 +6,7 @@
   <!--  <div>-->
   <form [formGroup]="form" class="d-flex flex-column align-items-center" style="width: 350px">
 
-    <h1>Вход в систему</h1>
+    <div style="font-size: 2rem;">Вход в систему</div>
     <mat-error *ngIf="this.isErrorAuthentication">{{ getErrorMessage() }}</mat-error>
 
     <mat-form-field class="example-full-width w-100 mt-3" appearance="fill">
@@ -20,7 +20,8 @@
     </mat-form-field>
 
     <button mat-flat-button color="primary" class="w-100 mb-2" (click)="onLogin()">Войти</button>
-    <button mat-flat-button class="w-100 mb-2" style="background: #ffffff;color: black;border: 1px solid black;" (click)="notImplemented()">
+    <button mat-flat-button class="w-100 mb-2" style="background: #ffffff;color: black;border: 1px solid black;"
+            (click)="notImplemented()">
       <div class="d-flex justify-content-between align-content-center">
 
         <span>
@@ -40,7 +41,7 @@
         <div class="w-100 text-center">Войти через Вконтакте</div>
       </div>
     </button>
-    <a href="#" (click)="notImplemented($event)">Первый раз? Зарегистрироваться</a>
+    <a href="/registration">Первый раз? Зарегистрироваться</a>
 
   </form>
   <!--  </div>-->

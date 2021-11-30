@@ -262,7 +262,10 @@ namespace Authentication.Controllers.API.v1
         {
             var res = _userManager.SetPassword(model);
             if (res == ResultUserManager.Success)
-                return Ok();
+            {
+                var email = _usersRepository.Get(model.UserGuid).Email;
+                return Ok(_userManager.GetToken(email, model.Password));
+            }
 
             return BadRequest(res);
         }

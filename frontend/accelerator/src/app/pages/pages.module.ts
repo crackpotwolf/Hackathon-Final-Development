@@ -46,9 +46,11 @@ import {OverlayPanelModule} from "primeng/overlaypanel";
 import {GalleriaModule} from "primeng/galleria";
 import {SkeletonModule} from "primeng/skeleton";
 import {DividerModule} from "primeng/divider";
-import { MainComponent } from './main/main.component';
+import {MainComponent} from './main/main.component';
 import {PagesRoutingModule} from "./pages-routing.module";
 import {LayoutsModule} from "../layouts/layouts.module";
+import {RegistrationComponent} from './account/registration/registration.component';
+import { SetPasswordComponent } from './account/set-password/set-password.component';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -64,8 +66,9 @@ const DragConfig = {
 @NgModule({
   declarations:
     [
-    MainComponent
-  ],
+      MainComponent,
+      SetPasswordComponent,
+    ],
   imports: [
     CommonModule,
     LayoutsModule,

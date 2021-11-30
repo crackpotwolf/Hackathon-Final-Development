@@ -16,6 +16,9 @@ import {AuthInterceptor} from "../interceptors/auth/auth.interceptor";
 import {LayoutsModule} from "./layouts/layouts.module";
 import {PagesModule} from "./pages/pages.module";
 import {ToastModule} from "primeng/toast";
+import {RegistrationComponent} from "./pages/account/registration/registration.component";
+import {DialogModule} from "primeng/dialog";
+import {HttpErrorInterceptor} from "../interceptors/http-error.interceptor";
 
 export function createTranslateLoader(http: HttpClient): any {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -24,7 +27,8 @@ export function createTranslateLoader(http: HttpClient): any {
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent
+    LoginComponent,
+    RegistrationComponent
   ],
   imports: [
     BrowserModule,
@@ -43,11 +47,17 @@ export function createTranslateLoader(http: HttpClient): any {
       }
     }),
     ToastModule,
+    DialogModule,
   ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorInterceptor,
       multi: true
     },
   ],

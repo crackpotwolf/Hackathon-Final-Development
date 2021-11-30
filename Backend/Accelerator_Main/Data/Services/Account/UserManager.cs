@@ -266,9 +266,9 @@ namespace Data.Services.Account
 
                 if (res.Errors.Count != 0) 
                     return res;
-                
-                #endregion
 
+                #endregion
+                //user.PasswordHash = GetPasswordHash("fsdhgsdfkghdlsjkhjdih1298ry187vh39ugh1239gh931rnjg-79342rhg3j280gu34bn49hb942bj94732hb");
                 db.Add(user);
                 db.SaveChanges();
 

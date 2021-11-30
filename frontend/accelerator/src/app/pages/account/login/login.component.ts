@@ -41,14 +41,7 @@ export class LoginComponent implements OnInit {
       this.authService.login(val.email, val.password)
         .subscribe((resp) => {
           localStorage.setItem('token', resp.access_token);
-          this.http.get('/api/authentication/v1/account/user-info')
-            .subscribe((userInfo: any) => {
-              localStorage.setItem('showColumnsEmployees', JSON.stringify(userInfo['showColumnsEmployees']));
-              this.router.navigate(['']);
-            }, (err) => {
-              this.isErrorAuthentication = true;
-              this.response = err;
-            });
+          this.router.navigate(['']);
         }, error => {
           this.isErrorAuthentication = true;
           this.response = error;

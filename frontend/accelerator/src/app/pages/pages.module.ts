@@ -51,6 +51,7 @@ import {PagesRoutingModule} from "./pages-routing.module";
 import {LayoutsModule} from "../layouts/layouts.module";
 import {RegistrationComponent} from './account/registration/registration.component';
 import { SetPasswordComponent } from './account/set-password/set-password.component';
+import { CardgridComponent } from './main/cardgrid/cardgrid.component';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -68,6 +69,7 @@ const DragConfig = {
     [
       MainComponent,
       SetPasswordComponent,
+      CardgridComponent,
     ],
   imports: [
     CommonModule,

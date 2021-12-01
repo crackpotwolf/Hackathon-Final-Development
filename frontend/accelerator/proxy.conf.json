@@ -4,5 +4,11 @@
     "secure": false,
     "logLevel": "debug",
     "changeOrigin": true
+  },
+  "/api/accelerator/*": {
+    "target": "http://localhost:7002",
+    "secure": false,
+    "logLevel": "debug",
+    "changeOrigin": true
   }
 }

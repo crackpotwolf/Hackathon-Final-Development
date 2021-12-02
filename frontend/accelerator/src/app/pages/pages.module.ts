@@ -50,8 +50,12 @@ import {MainComponent} from './main/main.component';
 import {PagesRoutingModule} from "./pages-routing.module";
 import {LayoutsModule} from "../layouts/layouts.module";
 import {RegistrationComponent} from './account/registration/registration.component';
-import { SetPasswordComponent } from './account/set-password/set-password.component';
-import { CardgridComponent } from './main/cardgrid/cardgrid.component';
+import {SetPasswordComponent} from './account/set-password/set-password.component';
+import {CardgridComponent} from './main/cardgrid/cardgrid.component';
+import {FilterComponent} from "../components/filter/filter.component";
+import {DynamicFormFieldComponent} from "../components/dynamic-forms/dynamic-form-field/dynamic-form-field.component";
+import {DynamicFormComponent} from "../components/dynamic-forms/dynamic-form/dynamic-form.component";
+import {DynamicFormControlService} from "../components/dynamic-forms/dynamic-form-control-service.service";
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -70,6 +74,9 @@ const DragConfig = {
       MainComponent,
       SetPasswordComponent,
       CardgridComponent,
+      FilterComponent,
+      DynamicFormFieldComponent,
+      DynamicFormComponent
     ],
   imports: [
     CommonModule,
@@ -133,7 +140,8 @@ const DragConfig = {
       provide: PERFECT_SCROLLBAR_CONFIG,
       useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
     },
-    {provide: CDK_DRAG_CONFIG, useValue: DragConfig}
+    {provide: CDK_DRAG_CONFIG, useValue: DragConfig},
+    DynamicFormControlService,
   ]
 })
 export class PagesModule {

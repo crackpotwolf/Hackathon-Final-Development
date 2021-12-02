@@ -1,0 +1,12 @@
+<div style="min-height: 300px">
+  <div *ngIf="!formFields" class="text-center">
+    <p-progressSpinner></p-progressSpinner>
+  </div>
+
+  <div *ngIf="formFields">
+    <app-dynamic-form [fields]="formFields"
+                      (onFormChanged)="onFormChanged($event, 'general')"></app-dynamic-form>
+  </div>
+
+  <button (click)="onClick()">Click</button>
+</div>

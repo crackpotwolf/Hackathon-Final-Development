@@ -1,0 +1,12 @@
+version: '3.4'
+
+services:
+  accelerator_main:
+    image: "accelerator_main:${TAG}"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+    - 6110:801
